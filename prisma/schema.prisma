@@ -1,0 +1,42 @@
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String  @id @default(cuid())
+  email             String  @unique
+  firstName         String
+  lastName          String
+  addresses         Address[]
+}
+
+model Address {
+    id                String  @id @default(cuid())
+    street            String
+    city              String
+    state             String
+    country           String
+    zip               String
+    userId            String
+    user              User    @relation(fields: [userId], references: [id])
+    trees             Tree[]
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
+
+model Tree {
+    id                String  @id @default(cuid())
+    name              String
+    species           String
+    userId            String
+    addressId         String
+    address           Address @relation(fields: [addressId], references: [id])
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+}
