@@ -17,8 +17,22 @@
   }
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: #131313;
+}
+
+input, select{
+  font-weight: 400;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   background: linear-gradient(
       to bottom,
       transparent,

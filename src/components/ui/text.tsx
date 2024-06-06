@@ -39,5 +39,5 @@ export interface TextProps
 }
 
 export const Text = ({ className, weight, variant, as: Tag = 'span', size, ...props }: TextProps) => {
-  return <Tag className={cn(textVariants({ size, variant, weight, className }))} {...props} />;
+  return <Tag className={cn('!text-[#4A5167]', textVariants({ size, variant, weight, className }))} {...props} />;
 };
