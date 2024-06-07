@@ -1,7 +1,7 @@
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  directUrl         = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -9,34 +9,35 @@ generator client {
 }
 
 model User {
-  id                String  @id @default(cuid())
-  email             String  @unique
-  firstName         String
-  lastName          String
-  addresses         Address[]
+  id        String    @id @default(cuid())
+  email     String    @unique
+  firstName String
+  lastName  String
+  addresses Address[]
+  trees     Tree[]
 }
 
 model Address {
-    id                String  @id @default(cuid())
-    street            String
-    city              String
-    state             String
-    country           String
-    zip               String
-    userId            String
-    user              User    @relation(fields: [userId], references: [id])
-    trees             Tree[]
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  street    String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  trees     Tree[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Tree {
-    id                String  @id @default(cuid())
-    name              String
-    species           String
-    userId            String
-    addressId         String
-    address           Address @relation(fields: [addressId], references: [id])
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+  id                 String   @id @default(cuid())
+  name               String
+  species            String
+  yearPlanted        DateTime
+  trunkCircumference Int
+  height             Int
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  addressId          String
+  address            Address  @relation(fields: [addressId], references: [id])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }

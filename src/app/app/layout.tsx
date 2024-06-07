@@ -1,13 +1,12 @@
-import { createClient } from "@/lib/utils/supabase/server"
+import { createClientServer } from "@/lib/utils/supabase/server"
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
-import ClientProviders from './providers/client-providers'
+import ClientProviders from '../providers/client-providers'
 
 import { redirect } from 'next/navigation';
 
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-    const supabase = createClient()
-    const queryClient = new QueryClient()
+    const supabase = createClientServer()
     const { data, error } = await supabase.auth.getUser()
     if (error || !data?.user) {
         redirect('/auth/sign-in')
@@ -17,7 +16,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
     return (
         <ClientProviders>
-            <HydrationBoundary state={dehydrate(queryClient)}>{children}</HydrationBoundary>
+            {children}
         </ClientProviders>
     )
 }

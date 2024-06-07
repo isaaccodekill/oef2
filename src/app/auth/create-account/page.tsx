@@ -2,18 +2,33 @@
 
 import { useState } from "react";
 import { Text } from "@/components/ui/text";
-import { Country, State, City } from 'country-state-city';
-import SelectDropdown from "@/components/ui/select";
-import { extractIsoCode, transformCityOptions, transformCountryOptions, transformStateOptions } from "@/lib/utils/address";
 import { useForm, Controller } from 'react-hook-form'
 import { CreateAccountForm } from "@/types";
 import FormFieldInput from "@/components/ui/form-field-input";
 import Button from "@/components/ui/button"
 import Link from "next/link";
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useSignOut, useSignUp } from "@/lib/hooks/useAuth";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
 
 
 const CreateAccountPage: React.FC = () => {
+
+    const router = useRouter()
+    const userSchema = z.object({
+        firstName: z.string().min(2, { message: 'First name must be at least 2 characters long' }),
+        lastName: z.string().min(2, { message: 'Last name must be at least 2 characters long' }),
+        email: z.string().email({ message: 'Invalid email address' }),
+        password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
+        confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters long" }),  // compare with password,
+        street: z.string().min(2, { message: 'Street must be at least 2 characters long' }),
+    }).refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ["confirmPassword"],
+    });
 
     const {
         watch,
@@ -24,28 +39,35 @@ const CreateAccountPage: React.FC = () => {
         setValue,
         formState: { errors },
         setError,
-    } = useForm<CreateAccountForm>({
+    } = useForm<z.infer<typeof userSchema>>({
         defaultValues: {
-            country: '',
-            state: "",
-            city: '',
+            street: "",
             firstName: "",
             lastName: '',
-        }
+            email: '',
+            confirmPassword: '',
+        },
+        resolver: zodResolver(userSchema)
     });
 
-    const onSubmit = (data: CreateAccountForm) => {
 
+    const redirectToSignIn = () => {
+        // redirect to sign in page
+        router.replace('/app/dashboard')
     }
 
-    const country = watch('country')
-    const state = watch('state')
-    const city = watch('city')
+    const { mutate, isPending } = useSignUp(redirectToSignIn)
+
+    const onSubmit = (data: z.infer<typeof userSchema>) => {
+        mutate(data as CreateAccountForm)
+    }
+
     const firstName = watch('firstName')
     const lastName = watch('lastName')
     const password = watch('password')
     const email = watch('email')
     const confirmPassword = watch('confirmPassword')
+    const street = watch('street')
 
 
 
@@ -120,59 +142,22 @@ const CreateAccountPage: React.FC = () => {
                         <Text size="sm">
                             Enter your address Details
                         </Text>
-
                         <div className="">
-                            <Text className="text-[12px]"> Country </Text>
-                            <SelectDropdown
-                                name="country"
-                                label="Country"
-                                placeholder="Select a country"
-                                value={country}
-                                onChange={(val: string) => {
-                                    setValue('country', val)
-                                    setValue('state', '')
-                                    setValue('city', '')
-                                }}
-                                options={transformCountryOptions(Country.getAllCountries())}
+                            <FormFieldInput
+                                value={street}
+                                name="address"
+                                label="Enter your address"
+                                type="address"
+                                placeholder="Where do you live?"
+                                error={errors.street}
+                                onChange={(val: string) => setValue('street', val)}
                             />
-                            {errors.country && <span className="text-[10px] text-red-300">{errors.country.message}</span>}
-                        </div>
-                        <div className="">
-                            <Text className="text-[12px]"> State </Text>
-                            <SelectDropdown
-                                disabled={!country}
-                                name="state"
-                                label="State"
-                                placeholder="Select a state"
-                                value={state}
-                                onChange={(val: string) => {
-                                    setValue('state', val)
-                                    setValue('city', '')
-                                }}
-                                options={transformStateOptions(State.getStatesOfCountry(extractIsoCode(country)))}
-                            />
-                            {errors.state && <Text className="text-[10px] text-red-300">{errors.state.message}</Text>}
-                        </div>
-                        <div className="">
-                            <Text className="text-[12px]"> Country </Text>
-                            <SelectDropdown
-                                disabled={!state}
-                                name="city"
-                                label="City"
-                                placeholder="Select a City"
-                                value={city}
-                                onChange={(val: string) => {
-                                    setValue('city', val)
-                                }}
-                                options={transformCityOptions(City.getCitiesOfState(extractIsoCode(country), extractIsoCode(state)))}
-                            />
-                            {errors.city && <Text className="text-[10px] text-red-300">{errors.city.message}</Text>}
                         </div>
                     </div>
                     <Button
                         onClick={handleSubmit(onSubmit)}
                         className="w-full h-[40px]"
-                        loading={false}
+                        loading={isPending}
                         text="Create Account"
                     />
                     <div className="flex mt-4 justify-center">

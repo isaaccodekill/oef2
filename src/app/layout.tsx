@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 const open_sans = Poppins({ subsets: ["latin"], display: 'swap', weight: "400" });
 

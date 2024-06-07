@@ -1,10 +1,7 @@
-import TreesClientLayout from './components/trees-client-layout';
-import ClientProviders from '@/app/app/client-providers';
+import TreesList from './components/tree-list';
 
 export default function TreesPage() {
     return (
-        <ClientProviders>
-            <TreesClientLayout/>
-        </ClientProviders>
+        <TreesList />
     )
 }

@@ -6,10 +6,22 @@ import { SignInForm } from "@/types";
 import FormFieldInput from "@/components/ui/form-field-input";
 import Button from "@/components/ui/button"
 import Link from "next/link";
+import { useSignIn } from "@/lib/hooks/useAuth";
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from "next/router";
 
 
 
-const CreateAccountPage: React.FC = () => {
+
+const SignInPage: React.FC = () => {
+
+
+    const router = useRouter()
+    const userSchema = z.object({
+        email: z.string().email({ message: 'Invalid email address' }),
+        password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
+    });
 
     const {
         watch,
@@ -18,19 +30,27 @@ const CreateAccountPage: React.FC = () => {
         setValue,
         formState: { errors },
         setError,
-    } = useForm<SignInForm>({
+    } = useForm<z.infer<typeof userSchema>>({
         defaultValues: {
             email: '',
             password: '',
-        }
+        },
+        resolver: zodResolver(userSchema)
     });
 
-    const onSubmit = (data: SignInForm) => {
-
-    }
     const password = watch('password')
     const email = watch('email')
 
+    const onSuccessfulSignIn = () => {
+        // redirect to dashboard
+        router.replace('/app/dashboard')
+    }
+
+    const { mutate, isPending } = useSignIn(onSuccessfulSignIn)
+
+    const onSubmit = (data: SignInForm) => {
+        mutate(data)
+    }
 
 
 
@@ -67,9 +87,9 @@ const CreateAccountPage: React.FC = () => {
                         </div>
                     </div>
                     <Button
+                        loading={isPending}
                         onClick={handleSubmit(onSubmit)}
                         className="w-full h-[40px]"
-                        loading={false}
                         text="Log In"
                     />
                     <div className="flex mt-4 justify-center">
@@ -83,4 +103,4 @@ const CreateAccountPage: React.FC = () => {
     );
 }
 
-export default CreateAccountPage;
+export default SignInPage;
