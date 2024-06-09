@@ -20,15 +20,20 @@ export type UserContext = Prisma.UserGetPayload<{
 
 export const getAuthenticatedUser = async (): Promise<UserContext | null> => {
     const db = createClientServer();
-    const session = await db.auth.getSession();
-    const userId = session.data?.session?.user?.id;
+    const { error, data } = await db.auth.getSession();
+    console.log(data, error, 'session from getAuthenticatedUser')
+    if (error) {
+        console.error(error)
+        throw new Error('Session error')
+    }
+    console.log(data?.session?.user?.id, 'Shake yansh again')
+    const email = data?.session?.user?.email as string;
 
-
-
-    if (!userId) {
+    if (!email) {
         return null;
     }
 
-    const userData = await userService.getUserByAuthIWithId(userId) as UserContext;
+    const userData = await userService.getUserByEmail(email) as UserContext;
+    console.log(userData, 'Shake yansh again 2.5')
     return userData;
 }

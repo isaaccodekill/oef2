@@ -1,8 +1,20 @@
 import { Text } from "@/components/ui/text"
 import ClientProviders from '@/app/providers/client-providers'
 import { createClientServer } from "@/lib/utils/supabase/server"
+import { redirect } from "next/navigation"
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+    const supabase = createClientServer()
+    const { data, error } = await supabase.auth.getUser()
+    if (error) {
+        console.error(error)
+    }
+
+    if (data?.user) {
+        redirect('/app')
+    }
+
+
     return (
         <ClientProviders>
             <div className="h-screen overflow-hidden flex flex-col bg-white">

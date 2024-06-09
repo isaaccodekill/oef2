@@ -1,6 +1,7 @@
+'use server'
 import TreesList from './components/tree-list';
 
-export default function TreesPage() {
+export default async function TreesPage() {
     return (
         <TreesList />
     )

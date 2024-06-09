@@ -1,12 +1,13 @@
 'use client'
 
 import { Text } from "@/components/ui/text";
-import { Card, CardHeader, CardBody, StackDivider, Stack, Box, Button } from '@chakra-ui/react'
+import { Card, CardHeader, CardBody, StackDivider, Stack, Box, Button, Skeleton } from '@chakra-ui/react'
 import { format, set } from 'date-fns'
 import EditTreeModal from "./edit-tree-modal";
 import { EditTreeForm } from "@/types";
 import { useState } from "react";
 import CreateTreeModal from "./create-tree-modal";
+import { useGetTrees } from '@/lib/hooks/trees'
 
 
 const trees = [
@@ -45,40 +46,78 @@ export default function TreesList() {
         setSelectedTree(null)
     }
 
+    const { data: trees, error, isLoading } = useGetTrees()
+
+    const renderContent = () => {
+        if (isLoading) {
+            return (
+                <div className="flex w-full gap-4 mt-10 flex-wrap">
+                    <div className="h-[200px] rounded-md w-[200px]">
+                        <Skeleton height='200px' />
+                    </div>
+                    <div className="h-[200px] rounded-md w-[200px]">
+                        <Skeleton height='200px' />
+                    </div>
+                    <div className="h-[200px] rounded-md w-[200px]">
+                        <Skeleton height='200px' />
+                    </div>
+                </div>
+            )
+        }
+        else if (trees && trees.length > 0) {
+            return (<>
+                <div className="flex justify-center items-center flex-col gap-4">
+                    <Text size='xl' weight="bold" className="text-[40px]"> View trees you've tracked </Text>
+                    <Button onClick={() => setIsCreateModalOpen(true)} colorScheme="blue">Add a tree</Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                    {trees?.map(tree => (
+                        <Card key={tree.id} className="!border !shadow-none bottom-1">
+                            <CardHeader>
+                                <Text size='md'>{tree.name}</Text>
+                            </CardHeader>
+                            <CardBody>
+                                <Stack divider={<StackDivider />} spacing='4'>
+                                    <Box className="">
+                                        <Text size='sm'> <Text weight="bold"> Species: </Text>  {tree.species}</Text>
+                                    </Box>
+                                    <Box className="">
+                                        <Text size='sm'> <Text weight="bold"> Date added: </Text>  {format(tree.createdAt, "yyyy-MM-dd")}</Text>
+                                    </Box>
+                                    <Box className="">
+                                        <Button onClick={() => {
+                                            setIsModalOpen(true)
+                                            setSelectedTree({
+                                                id: tree.id,
+                                                name: tree.name,
+                                                species: tree.species,
+                                                yearPlanted: (tree.yearPlanted ? new Date(tree.yearPlanted).toISOString() : new Date().toISOString()),
+                                                trunkCircumference: tree.trunkCircumference,
+                                                height: tree.height,
+                                            })
+                                        }} colorScheme="blue">Edit Tree</Button>
+                                    </Box>
+                                </Stack>
+                            </CardBody>
+                        </Card>
+                    ))}
+                </div>
+            </>
+            )
+        } else {
+            return (
+                <div className="flex justify-center items-center flex-col gap-4">
+                    <Text size='xl' weight="bold" className="text-[40px]">No trees found</Text>
+                    <Button onClick={() => setIsCreateModalOpen(true)} colorScheme="blue">Add a tree</Button>
+                </div>
+            )
+        }
+    }
+
+
     return (
         <div className="py-10 px-10">
-            <div className="mb-10 flex items-center gap-4">
-                <Text size="xl" className="" weight="bold">View your trees</Text>
-                <Button onClick={() => {
-                    setIsCreateModalOpen(true)
-                }} colorScheme="blue">Add a new Tree</Button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                {trees.map(tree => (
-                    <Card key={tree.id} className="!border !shadow-none bottom-1">
-                        <CardHeader>
-                            <Text size='md'>{tree.name}</Text>
-                        </CardHeader>
-                        <CardBody>
-                            <Stack divider={<StackDivider />} spacing='4'>
-                                <Box className="">
-                                    <Text size='sm'> <Text weight="bold"> Species: </Text>  {tree.species}</Text>
-                                </Box>
-                                <Box className="">
-                                    <Text size='sm'> <Text weight="bold"> Date added: </Text>  {format(tree.createdAt, "yyyy-MM-dd")}</Text>
-                                </Box>
-                                <Box className="">
-                                    <Button onClick={() => {
-                                        setIsModalOpen(true)
-                                        setSelectedTree({ ...tree, id: tree.id })
-                                    }} colorScheme="blue">Edit Tree</Button>
-                                </Box>
-                            </Stack>
-                        </CardBody>
-                    </Card>
-                ))}
-            </div>
+            {renderContent()}
             <EditTreeModal id={selectedTree?.id as string} open={isModalOpen} onClosed={closeEditModal} TreeData={selectedTree} />
             <CreateTreeModal open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
         </div >

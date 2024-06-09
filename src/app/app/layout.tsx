@@ -1,5 +1,5 @@
+'use server'
 import { createClientServer } from "@/lib/utils/supabase/server"
-import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query';
 import ClientProviders from '../providers/client-providers'
 
 import { redirect } from 'next/navigation';
@@ -7,11 +7,14 @@ import { redirect } from 'next/navigation';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
     const supabase = createClientServer()
-    const { data, error } = await supabase.auth.getUser()
-    if (error || !data?.user) {
+    const session = await supabase.auth.getSession()
+    const { error, data } = session
+
+    if (error || !data?.session?.user) {
+        if (error) {
+            console.error(error)
+        }
         redirect('/auth/sign-in')
-    } else {
-        redirect('/app/dashboard')
     }
 
     return (

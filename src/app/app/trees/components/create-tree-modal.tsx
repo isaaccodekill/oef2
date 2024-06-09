@@ -32,6 +32,9 @@ export default function CreateTreeModal({ open, onClose }: { open: boolean, onCl
   const height = watch('height')
   const trunkCircumference = watch('trunkCircumference')
 
+
+  
+
   const onSubmit = (data: CreateTreeForm) => {
 
   }
@@ -44,7 +47,7 @@ export default function CreateTreeModal({ open, onClose }: { open: boolean, onCl
           <ModalHeader>Add a tree</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <div className="flex flex-col gap-4 py-10">
+            <div className="flex flex-col gap-4 pb-10">
               <div className="">
                 <FormFieldInput
                   name="name"
