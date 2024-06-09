@@ -11,7 +11,7 @@ export const useSignIn = (onSuccess: () => void) => {
     const toast = useToast()
 
     const signIn = async ({ email, password }: { email: string, password: string }) => {
-        const { error } = await client.auth.signInWithPassword({
+        const { error, data: session } = await client.auth.signInWithPassword({
             email,
             password
         })
@@ -69,7 +69,7 @@ export const useSignUp = (onSuccess: () => void) => {
     const toast = useToast()
 
     const signUp = async (data: CreateAccountForm) => {
-        const { error } = await client.auth.signUp({
+        const { error, data: session } = await client.auth.signUp({
             email: data.email,
             password: data.password,
             options: {
@@ -85,6 +85,7 @@ export const useSignUp = (onSuccess: () => void) => {
         }
         const user = await http.post("/user", JSON.stringify(
             {
+                id: session?.user?.id,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,

@@ -1,6 +1,6 @@
 import withRequestBody, { IWithRequestBody } from '@/lib/middleware/withRequestBody'
 import withAuth from '@/lib/middleware/withAuth'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { treeService } from '@/services/service.tree'
 import { getAuthenticatedUser } from '@/lib/utils/auth'
 import { z } from 'zod'
@@ -18,9 +18,9 @@ const updateSchema = z.object({
 
 type UpdateTreeParams = IWithRequestBody<z.infer<typeof updateSchema>>
 
-export const PUT = applyMiddleware<UpdateTreeParams>(
+export const PUT = applyMiddleware(
     [withAuth, withRequestBody(updateSchema)],
-    async function (req, { params }) {
+    async function (req: NextRequest, { params }) {
         try {
             const user = await getAuthenticatedUser()
             if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })

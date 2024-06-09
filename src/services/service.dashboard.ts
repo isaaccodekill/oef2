@@ -52,23 +52,23 @@ class DashboardService<T extends typeof prisma> {
                 species: species.species,
                 count: species._count.species
             })),
-            averageHeight: averageHeight._avg.height as number
+            averageHeight: averageHeight._avg.height || 0 as number
         }
     }
 
     // draw a graph of the total number of trees planted per year over the last 10 years
-    async getTreesPlantedPerYear({ noOfYears }: { noOfYears: number }): Promise<{ year: string, trees_planted: number }> {
+    async getTreesPlantedPerYear({ noOfYears }: { noOfYears: number }): Promise<{ year: string, trees_planted: number }[]> {
         const currentYear = new Date().getFullYear();
         const response = await prisma.$queryRaw`
         SELECT
-        EXTRACT(YEAR FROM year_planted) as year,
+        EXTRACT(YEAR FROM "yearPlanted") as year,
         COUNT(*) as trees_planted
-        FROM tree
-        WHERE EXTRACT(YEAR FROM year_planted) >= ${currentYear - noOfYears}
-        GROUP BY EXTRACT(YEAR FROM year_planted)
+        FROM "Tree"
+        WHERE EXTRACT(YEAR FROM "yearPlanted") >= ${currentYear - noOfYears}
+        GROUP BY EXTRACT(YEAR FROM "yearPlanted")
         ORDER BY year;
         `
-        return response as { year: string, trees_planted: number };
+        return response as { year: string, trees_planted: number }[];
     }
 }
 

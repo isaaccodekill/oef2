@@ -10,8 +10,7 @@ import Link from "next/link";
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignOut, useSignUp } from "@/lib/hooks/useAuth";
-import { redirect } from "next/navigation";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 
 

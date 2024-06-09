@@ -9,11 +9,26 @@ export class UserService<T extends typeof prisma> {
         this.db = db;
     }
 
-    async createUser(user: Omit<User, 'id'>, street: string): Promise<User> {
+    async createUser(user: User, street: string): Promise<User> {
+
+        // check if email is in use
+
+        const existingUser = await this.getUserByEmail(user.email);
+
+        if (existingUser) {
+            throw new Error('Email is already in use');
+        }
+
+
         const usercreated = await prisma.user.create({ data: user });
-        const address = await addressService.createAddress({ street, userId: usercreated.id });
+
+        await addressService.createAddress({ street, userId: usercreated.id });
 
         return usercreated;
+    }
+
+    async getUserByEmail(email: string): Promise<User | null> {
+        return prisma.user.findUnique({ where: { email } });
     }
 
     async getUserById(id: string): Promise<User | null> {

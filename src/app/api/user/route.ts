@@ -9,6 +9,7 @@ import withRequestBody from '@/lib/middleware/withRequestBody';
 
 
 const schema = z.object({
+    id: z.string(),
     firstName: z.string(),
     lastName: z.string(),
     email: z.string().email(),
@@ -24,6 +25,7 @@ export const POST = applyMiddleware(
         try {
 
             const user = await userService.createUser({
+                id: body.id,
                 firstName: body.firstName,
                 lastName: body.lastName,
                 email: body.email,

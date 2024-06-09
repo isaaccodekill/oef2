@@ -1,4 +1,5 @@
 import { FieldError, Path, UseFormRegister } from 'react-hook-form'
+import { Prisma } from '@prisma/client';
 
 export interface CreateAccountForm extends Record<string, any> {
     firstName: string;
@@ -63,3 +64,21 @@ export interface EditTreeForm {
     height: number;
     trunkCircumference: number;
 }
+
+export interface DashboardData {
+    totalTrees: number;
+    userTrees: number;
+    commonSpecies: { species: string; count: number }[];
+    averageHeight: number;
+}
+
+export interface TimeSeriesData {
+    year: string;
+    trees_planted: number;
+}
+
+export interface TreeData extends Prisma.TreeGetPayload<{
+    include: {
+        address: true;
+    }
+}> { }
