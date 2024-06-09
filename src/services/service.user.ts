@@ -28,7 +28,7 @@ export class UserService<T extends typeof prisma> {
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
-        return prisma.user.findUnique({ where: { email } });
+        return prisma.user.findUnique({ where: { email }, include: { addresses: true } });
     }
 
     async getUserById(id: string): Promise<User | null> {

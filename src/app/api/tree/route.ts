@@ -4,7 +4,7 @@ import withAuth from '@/lib/middleware/withAuth'
 import { NextResponse } from 'next/server'
 import { treeService } from '@/services/service.tree'
 import { getAuthenticatedUser } from '@/lib/utils/auth'
-import withRequestBody, { IWithRequestBody } from '@/lib/middleware/withRequestBody'
+import withRequestBody from '@/lib/middleware/withRequestBody'
 import { z } from 'zod'
 
 
@@ -26,27 +26,24 @@ export const GET = applyMiddleware(
 
 // create tree
 const schema = z.object({
-    tree: z.object({
-        name: z.string(),
-        species: z.string(),
-        height: z.number(),
-        trunkCircumference: z.number(),
-        yearPlanted: z.string(),
-        addressId: z.string(),
-    }),
-    addressId: z.string(),
-
+    name: z.string(),
+    species: z.string(),
+    height: z.number(),
+    trunkCircumference: z.number(),
+    yearPlanted: z.string(),
 })
-type CreateTreeParams = IWithRequestBody<z.infer<typeof schema>>
 
-export const POST = applyMiddleware<CreateTreeParams>(
-    [withAuth, withRequestBody(schema)],
-    async function (req, { params }) {
+
+export const POST = applyMiddleware(
+    [withRequestBody(schema), withAuth],
+    async function (req, { body }) {
         try {
             const user = await getAuthenticatedUser()
             if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
-            const treeData = params.body.tree
-            const addressId = params.body.addressId
+            // extract primary address id from db
+            const treeData = body
+            // will be changed when we have multiple addresses
+            const addressId = user.addresses[0].id
             const tree = await treeService.createTree({
                 ...treeData,
                 userId: user.id,

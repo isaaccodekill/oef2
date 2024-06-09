@@ -1,4 +1,4 @@
-import withRequestBody, { IWithRequestBody } from '@/lib/middleware/withRequestBody'
+import withRequestBody from '@/lib/middleware/withRequestBody'
 import withAuth from '@/lib/middleware/withAuth'
 import { NextRequest, NextResponse } from 'next/server'
 import { treeService } from '@/services/service.tree'
@@ -16,7 +16,6 @@ const updateSchema = z.object({
     yearPlanted: z.string(),
 })
 
-type UpdateTreeParams = IWithRequestBody<z.infer<typeof updateSchema>>
 
 export const PUT = applyMiddleware(
     [withAuth, withRequestBody(updateSchema)],
@@ -40,7 +39,7 @@ export const PUT = applyMiddleware(
 
 // delete tree
 
-export const DELETE = applyMiddleware<{ id: string }>([
+export const DELETE = applyMiddleware([
     withAuth,
 ], async function (req, { params }) {
     try {

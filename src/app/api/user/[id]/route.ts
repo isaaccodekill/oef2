@@ -9,7 +9,7 @@ const schema = {
 
 }
 
-export const GET = applyMiddleware<{id: string}>([
+export const GET = applyMiddleware([
     withAuth
 ], async function (req: NextRequest, { params }) {
     try {

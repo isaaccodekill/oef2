@@ -17,7 +17,6 @@ export const GET = applyMiddleware([
     const user = await getAuthenticatedUser()
     if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     const dashboardData = await dashboardService.getTreesPlantedPerYear(query.noYears);
-    console.log("Dashboard data", dashboardData)
     return NextResponse.json(dashboardData, { status: 200 });
 }
 )

@@ -58,6 +58,7 @@ export interface CreateTreeForm {
 }
 
 export interface EditTreeForm {
+    id: string;
     name: string;
     species: string;
     yearPlanted: string;

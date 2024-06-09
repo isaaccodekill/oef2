@@ -8,7 +8,6 @@ export const useGetDashboardData = () => {
     const fetchDashboardData = async (): Promise<DashboardData> => {
         // Call your suggestion service here and pass the input as a parameter
         const response = await http.get(`/dashboard`);
-        console.log("Dashboard data api response", response)
         return response.data;
     };
 

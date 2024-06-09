@@ -35,40 +35,6 @@ export default function DashboardPage() {
         }
     }, [error])
 
-    useEffect(() => {
-        console.log(data)
-    }, [data])
-
-    const fakeData = [
-        {
-            year: 2015,
-            trees_planted: 100
-        },
-        {
-            year: 2016,
-            trees_planted: 200
-        },
-        {
-            year: 2017,
-            trees_planted: 300
-        },
-        {
-            year: 2018,
-            trees_planted: 400
-        },
-        {
-            year: 2019,
-            trees_planted: 500
-        },
-        {
-            year: 2020,
-            trees_planted: 600
-        },
-        {
-            year: 2021,
-            trees_planted: 700
-        },
-    ]
 
     return (
         <div className="px-10 py-10">

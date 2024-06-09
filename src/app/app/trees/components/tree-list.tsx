@@ -8,6 +8,7 @@ import { EditTreeForm } from "@/types";
 import { useState } from "react";
 import CreateTreeModal from "./create-tree-modal";
 import { useGetTrees } from '@/lib/hooks/trees'
+import { Tree } from "./tree";
 
 
 const trees = [
@@ -70,36 +71,15 @@ export default function TreesList() {
                     <Text size='xl' weight="bold" className="text-[40px]"> View trees you've tracked </Text>
                     <Button onClick={() => setIsCreateModalOpen(true)} colorScheme="blue">Add a tree</Button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-10">
                     {trees?.map(tree => (
-                        <Card key={tree.id} className="!border !shadow-none bottom-1">
-                            <CardHeader>
-                                <Text size='md'>{tree.name}</Text>
-                            </CardHeader>
-                            <CardBody>
-                                <Stack divider={<StackDivider />} spacing='4'>
-                                    <Box className="">
-                                        <Text size='sm'> <Text weight="bold"> Species: </Text>  {tree.species}</Text>
-                                    </Box>
-                                    <Box className="">
-                                        <Text size='sm'> <Text weight="bold"> Date added: </Text>  {format(tree.createdAt, "yyyy-MM-dd")}</Text>
-                                    </Box>
-                                    <Box className="">
-                                        <Button onClick={() => {
-                                            setIsModalOpen(true)
-                                            setSelectedTree({
-                                                id: tree.id,
-                                                name: tree.name,
-                                                species: tree.species,
-                                                yearPlanted: (tree.yearPlanted ? new Date(tree.yearPlanted).toISOString() : new Date().toISOString()),
-                                                trunkCircumference: tree.trunkCircumference,
-                                                height: tree.height,
-                                            })
-                                        }} colorScheme="blue">Edit Tree</Button>
-                                    </Box>
-                                </Stack>
-                            </CardBody>
-                        </Card>
+                        <Tree tree={tree} editFunction={(tree) => {
+                            setIsModalOpen(true)
+                            setSelectedTree({
+                                ...tree,
+                                yearPlanted: format(tree.yearPlanted, 'yyyy-MM-dd'),
+                            })
+                        }} />
                     ))}
                 </div>
             </>

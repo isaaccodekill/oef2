@@ -1,3 +1,4 @@
+'use server'
 import { Text } from "@/components/ui/text"
 import ClientProviders from '@/app/providers/client-providers'
 import { createClientServer } from "@/lib/utils/supabase/server"

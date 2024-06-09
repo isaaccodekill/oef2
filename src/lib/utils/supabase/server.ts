@@ -4,7 +4,6 @@ import { cookies } from 'next/headers'
 export function createClientServer() {
   const cookieStore = cookies()
 
-  console.log('cookieStore', cookieStore)
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

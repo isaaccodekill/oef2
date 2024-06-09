@@ -30,7 +30,6 @@ export const POST = applyMiddleware(
                 lastName: body.lastName,
                 email: body.email,
             }, body.street);
-            console.log("User created: here api", user);
             return NextResponse.json(user, { status: 201 });
         } catch (error) {
             console.error("Error creating user:", error);

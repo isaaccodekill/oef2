@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import http from '../utils/http';
 import { suggestionsKeys } from '../react-query/query-keys';
 
+
 const useGetSuggestions = (input: string) => {
-    const fetchSuggestions = async () => {
+    const fetchSuggestions = async (): Promise<string[]> => {
         // Call your suggestion service here and pass the input as a parameter
         const response = await http.get(`/suggestions?input=${input}`);
         return response.data;
@@ -13,6 +14,7 @@ const useGetSuggestions = (input: string) => {
     return useQuery({
         queryKey: suggestionsKeys.list(input),
         queryFn: fetchSuggestions,
+        enabled: !!input
     });
 
 };

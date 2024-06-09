@@ -1,20 +1,33 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { treesKeys } from '../react-query/query-keys';
-import { EditTreeForm, TreeData } from '@/types';
+import { CreateTreeForm, EditTreeForm, TreeData } from '@/types';
+import http from '../utils/http';
+import { useToast } from '@chakra-ui/react';
 
-const API_URL = '/trees';
+const API_URL = '/tree';
 
 // Hook to create a tree
-export function useCreateTree() {
+export function useCreateTree(onSuccess: () => void) {
     const queryClient = useQueryClient();
+    const toast = useToast()
 
     return useMutation({
-        mutationFn: (newTreeData) => axios.post(API_URL, newTreeData),
+        mutationFn: (newTreeData: CreateTreeForm) => http.post(API_URL, newTreeData),
         onSuccess: () => {
             const key = treesKeys.list();
             queryClient.invalidateQueries({ queryKey: key });
+            onSuccess()
         },
+        onError: (e) => {
+            toast(
+                {
+                    status: "error",
+                    title: e.message,
+                    duration: 3000
+                }
+            )
+        }
     });
 }
 
@@ -49,7 +62,7 @@ export function useGetTrees() {
     return useQuery({
         queryKey: treesKeys.list(),
         queryFn: async (): Promise<TreeData[]> => {
-            const response = await axios.get(API_URL);
+            const response = await http.get(API_URL);
             return response.data;
         },
     });
