@@ -5,11 +5,11 @@ import withAuth from "@/lib/middleware/withAuth";
 import { getAuthenticatedUser } from "@/lib/utils/auth";
 import { addressService } from "@/services/service.address";
 import { NextRequest, NextResponse } from "next/server";
-import withRequestBody, { IWithRequestBody } from '@/lib/middleware/withRequestBody'
+import withRequestBody from '@/lib/middleware/withRequestBody'
 import { z } from 'zod'
 
 
-export const GET = applyMiddleware<any>([
+export const GET = applyMiddleware([
     withAuth
 ], async function (req: NextRequest, { params }) {
 
@@ -30,7 +30,6 @@ const schema = z.object({
     street: z.string(),
 })
 
-type CreateAddressParams = IWithRequestBody<z.infer<typeof schema>>
 
 export const POST = applyMiddleware(
     [withAuth, withRequestBody(schema)],

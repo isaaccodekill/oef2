@@ -33,7 +33,7 @@ export default function DashboardPage() {
                 isClosable: true,
             })
         }
-    }, [error])
+    }, [error, toast])
 
 
     return (

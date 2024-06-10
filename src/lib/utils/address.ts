@@ -1,4 +1,4 @@
-import { SelectOptions } from "@/components/ui/select";
+import { SelectOptions } from "@/types";
 import { ICity, ICountry, IState } from "country-state-city";
 
 export const transformCityOptions = (cities: ICity[]): SelectOptions[]  => {

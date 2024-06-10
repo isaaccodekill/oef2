@@ -26,11 +26,13 @@ export interface FormFields {
     onChange: (val: any) => void
 }
 
+
+export interface SelectOptions { value: string, label: string, disabled: boolean }[]
 export interface SelectProps {
     placeholder: string;
     name: string;
     label: string;
-    options: { value: string, label: string, disabled: boolean }[];
+    options: SelectOptions[];
     value?: string;
     disabled?: boolean;
     onChange?: (val: string) => void;

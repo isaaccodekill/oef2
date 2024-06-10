@@ -14,7 +14,7 @@ export default function MainAppLayout({ children }: { children: React.ReactNode 
     return (<div className="h-screen overflow-hidden flex flex-col bg-white">
         <div className="flex justify-between  items-center p-4 border bottom-1 gap-2">
             <Link href="/app/dashboard">
-                <img src="/nature.png" className="h-[20px]" />
+                <img src="/nature.png" alt="logo" className="h-[20px]" />
                 <Text size="md" weight="semibold" variant="primary">Tree Tracker</Text>
             </Link>
             <div className="flex items-center gap-4">

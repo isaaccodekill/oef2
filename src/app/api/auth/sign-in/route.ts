@@ -3,14 +3,10 @@ import withRequestBody from '@/lib/middleware/withRequestBody'
 import { createClientServer } from '@/lib/utils/supabase/server'
 import { userService } from '@/services/service.user'
 import { NextRequest, NextResponse } from 'next/server'
+import { loginSchema } from './schema'
 import z from 'zod'
-import { cookies } from 'next/headers';
 
 
-export const loginSchema = z.object({
-    email: z.string().email(),
-    password: z.string(),
-})
 
 export const POST = applyMiddleware([
     withRequestBody(loginSchema)
