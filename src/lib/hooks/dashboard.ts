@@ -29,7 +29,7 @@ export const useGetAnalysisData = ({
     };
 
     return useQuery({
-        queryKey: dashboardKeys.analysis(),
+        queryKey: dashboardKeys.analysis(noYears),
         queryFn: fetchAnalysisData,
     })
 }

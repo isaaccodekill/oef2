@@ -5,43 +5,45 @@ import { Modal, ModalBody, ModalOverlay, ModalContent, ModalCloseButton, useDisc
 import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import { tree } from "next/dist/build/templates/app-page";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Text } from "@/components/ui/text";
-import { }
+import { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useUpdateTree } from "@/lib/hooks/trees";
+import { useToast } from "@chakra-ui/react";
+import useGetSuggestions from "@/lib/hooks/useGetSuggestions";
+import { debounce } from 'lodash'
+import { useQueryClient } from "@tanstack/react-query";
+import { suggestionsKeys } from "@/lib/react-query/query-keys";
 
-export default function EditTreeModal({ TreeData, id, onClosed, open, }: { open: boolean, TreeData: EditTreeForm | null, id: string | null, onClosed: () => void }) {
+export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boolean, TreeData: EditTreeForm | null, id: string | null, onClosed: () => void }) {
 
+    const toast = useToast()
+    const queryClient = useQueryClient()
 
-    const closeForm = () => {
-        onClosed()
-    }
-
-
+    const editSchema = z.object({
+        name: z.string().min(3, { message: 'Name must be at least 3 characters long' }),
+        species: z.string().min(3, { message: 'Species must be at least 3 characters long' }),
+        yearPlanted: z.string(),
+        height: z.number().min(1, { message: 'Height must be at least 1 inch' }),
+        trunkCircumference: z.number().min(1, { message: 'Trunk circumference must be at least 1 inch' }),
+    })
 
     const {
         watch,
         handleSubmit,
-        getValues,
         setValue,
         formState: { errors },
-        setError,
-    } = useForm<EditTreeForm>({
+    } = useForm<z.infer<typeof schema>>({
         defaultValues: {
             name: TreeData?.name,
             species: TreeData?.species,
             yearPlanted: TreeData?.yearPlanted ? new Date(TreeData?.yearPlanted).toISOString() : new Date().toISOString(),
             height: TreeData?.height,
             trunkCircumference: TreeData?.trunkCircumference
-        }
+        },
+        resolver: zodResolver(editSchema)
     });
-
-    useEffect(() => {
-        setValue('name', TreeData?.name as string)
-        setValue('species', TreeData?.species as string)
-        setValue('yearPlanted', TreeData?.yearPlanted ? new Date(TreeData?.yearPlanted).toISOString() : new Date().toISOString())
-        setValue('height', TreeData?.height as number)
-        setValue('trunkCircumference', TreeData?.trunkCircumference as number)
-    }, [TreeData])
 
     const name = watch('name')
     const species = watch('species')
@@ -49,8 +51,71 @@ export default function EditTreeModal({ TreeData, id, onClosed, open, }: { open:
     const height = watch('height')
     const trunkCircumference = watch('trunkCircumference')
 
-    const onSubmit = (data: EditTreeForm) => {
 
+
+    const [suggestionQuery, setSuggestionQuery] = useState<string>('')
+
+
+    const { data: suggestions, isLoading, error, refetch } = useGetSuggestions(suggestionQuery)
+
+
+    const debouncedUpdateSuggestionQuery = useCallback(debounce((val) => {
+        queryClient.cancelQueries({ queryKey: suggestionsKeys.list() })
+        setSuggestionQuery(val)
+    }, 500), [])
+
+    useEffect(() => {
+        debouncedUpdateSuggestionQuery(name)
+    }, [name])
+
+    const closeForm = () => {
+        onClosed()
+    }
+
+    const onSuccessfulEdit = () => {
+        closeForm()
+        toast({
+            title: "Success",
+            description: "Successfully edited tracking data",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        })
+    }
+
+
+    const editMutation = useUpdateTree(onSuccessfulEdit)
+
+
+    const schema = z.object({
+        name: z.string().min(3, { message: 'Name must be at least 3 characters long' }),
+        species: z.string().min(3, { message: 'Species must be at least 3 characters long' }),
+        yearPlanted: z.string(),
+        height: z.number().min(1, { message: 'Height must be at least 1 inch' }),
+        trunkCircumference: z.number().min(1, { message: 'Trunk circumference must be at least 1 inch' }),
+    })
+
+    const onSubmit = (data: z.infer<typeof schema>) => {
+        editMutation.mutate({ ...data, id: TreeData?.id as string })
+    }
+
+    const renderSuggestions = () => {
+        if (!suggestionQuery || error) return null
+        if (isLoading) return (<div className="h-[20px] rounded-md bg-gray-100 animate-pulse w-full" />)
+        if (suggestions && suggestions?.length > 0) {
+            return (
+                <>
+                    <Text className="text-[10px]">
+                        Suggestions species:
+                    </Text>
+                    <div className="flex flex-row flex-wrap gap-2 mb-6">
+                        {suggestions.filter(s => s).slice(0, 5).map(s =>
+                            <Tag className="cursor-pointer hover:bg-slate-200" onClick={() => setValue('species', s)}>{s}</Tag>
+                        )}
+                    </div>
+                </>
+            )
+        }
     }
 
     return (
@@ -85,11 +150,7 @@ export default function EditTreeModal({ TreeData, id, onClosed, open, }: { open:
                                     onChange={(val: string) => setValue('species', val)}
                                 />
                             </div>
-                            <div className="flex flex-row gap-2">
-                                <Tag>Species 1</Tag>
-                                <Tag>Species 1</Tag>
-                                <Tag>Species 1</Tag>
-                            </div>
+                            {renderSuggestions()}
                             <div className="">
                                 <Text className="text-[12px]"> The year planted </Text>
                                 <DatePicker
@@ -123,7 +184,7 @@ export default function EditTreeModal({ TreeData, id, onClosed, open, }: { open:
                             <Button
                                 onClick={handleSubmit(onSubmit)}
                                 className="w-full h-[40px]"
-                                loading={false}
+                                loading={editMutation.isPending}
                                 text="Edit Tree"
                             />
                         </div>

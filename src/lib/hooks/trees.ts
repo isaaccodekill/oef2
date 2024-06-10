@@ -14,6 +14,21 @@ export function useCreateTree(onSuccess: () => void) {
 
     return useMutation({
         mutationFn: (newTreeData: CreateTreeForm) => http.post(API_URL, newTreeData),
+        onMutate: async (variables) => {
+            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+            const queryKey = treesKeys.list();
+            await queryClient.cancelQueries({ queryKey });
+
+            // Snapshot the previous value
+            const previousValue = queryClient.getQueryData<TreeData[]>(treesKeys.list());
+
+            // Optimistically update to the new value
+            if (previousValue) {
+                queryClient.setQueryData(treesKeys.list(), [...previousValue, variables]);
+            }
+
+            return { previousValue };
+        },
         onSuccess: () => {
             const key = treesKeys.list();
             queryClient.invalidateQueries({ queryKey: key });
@@ -32,27 +47,49 @@ export function useCreateTree(onSuccess: () => void) {
 }
 
 // Hook to update a tree
-export function useUpdateTree() {
+export function useUpdateTree(onSuccess: () => void) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (updatedTreeData: EditTreeForm & { id: string }) => axios.put(`${API_URL}/${updatedTreeData.id}`, updatedTreeData),
+        mutationFn: (updatedTreeData: EditTreeForm & { id: string }) => http.put(`${API_URL}/${updatedTreeData.id}`, updatedTreeData),
+        onMutate: (variables) => {
+            const queryKey = treesKeys.list();
+            queryClient.cancelQueries({ queryKey });
+            queryClient.setQueryData(queryKey, (oldData: TreeData[] | undefined) => {
+                return oldData?.map((tree) => {
+                    if (tree.id === variables.id) {
+                        return { ...tree, ...variables };
+                    }
+                    return tree;
+                }) || [];
+            })
+
+        },
         onSuccess: () => {
             const key = treesKeys.list();
             queryClient.invalidateQueries({ queryKey: key });
+            onSuccess()
         },
     });
 }
 
 // Hook to delete a tree
-export function useDeleteTree() {
+export function useDeleteTree(onSuccess: () => void) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (id: string) => axios.delete(`${API_URL}/${id}`),
+        mutationFn: (id: string) => http.delete(`${API_URL}/${id}`),
+        onMutate: (id) => {
+            let queryKey = treesKeys.list();
+            queryClient.setQueryData(queryKey, (oldData: TreeData[] | undefined) => {
+                return oldData?.filter((tree) => tree.id !== id) || [];
+            });
+
+        },
         onSuccess: () => {
             const key = treesKeys.list();
             queryClient.invalidateQueries({ queryKey: key });
+            onSuccess()
         },
     });
 }

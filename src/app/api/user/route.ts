@@ -6,6 +6,23 @@ import withAuth from '@/lib/middleware/withAuth';
 import { NextApiRequest, NextApiResponse } from 'next';
 import z from 'zod';
 import withRequestBody from '@/lib/middleware/withRequestBody';
+import { withRequestQueryParams } from '@/lib/middleware/withRequestQueryParams';
+import { getAuthenticatedUser } from '@/lib/utils/auth';
+
+
+
+export const GET = applyMiddleware(
+    [withAuth],
+    async (req: NextRequest, { params }) => {
+        try {
+            const user = await getAuthenticatedUser()
+            return NextResponse.json(user, { status: 200 });
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+        }
+    }
+)
 
 
 const schema = z.object({

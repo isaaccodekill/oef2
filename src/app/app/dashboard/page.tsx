@@ -21,7 +21,7 @@ export default function DashboardPage() {
 
     const toast = useToast()
     const { data, error, isLoading } = useGetDashboardData()
-    const { data: analysisData, error: analysisError, isLoading: analysisLoading } = useGetAnalysisData({ noYears: 5 })
+    const { data: analysisData, error: analysisError, isLoading: analysisLoading } = useGetAnalysisData({ noYears: years })
 
     useEffect(() => {
         if (error) {
@@ -65,15 +65,15 @@ export default function DashboardPage() {
                             </Card>
                             <Card className="!border !shadow-none border-1 p-10">
                                 <Text size="md">Average height of trees in city</Text>
-                                <Text className="text-[40px]" weight="bold">{data?.averageHeight}
+                                <Text className="text-[40px]" weight="bold">{data?.averageHeight.toFixed(2)} inches
                                 </Text>
                             </Card>
                             <Card className="!border !shadow-none border-1 p-10">
                                 <Text size="md">Most common species</Text>
                                 {
                                     data?.commonSpecies?.length as number > 0 ? data?.commonSpecies.map((species, index) => (
-                                        <div key={index} className="flex justify-between">
-                                            <Text>{species.species}</Text>
+                                        <div key={index} className="flex gap-2 mt-2 justify-between">
+                                            <Text weight="bold">{species.species}</Text>
                                             <Text>{species.count}</Text>
                                         </div>
                                     ))
@@ -94,8 +94,8 @@ export default function DashboardPage() {
                         <Card className="!border !shadow-none border-1 p-10 w-full">
                             <div className="flex justify-between">
                                 <Text size="md">Total trees tracked over time all time</Text>
-                                <Select placeholder='Select range' width={200} value={years} size='md'>
-                                    <option value={Infinity}>All time</option>
+                                <Select onChange={(e) => setYears(parseInt(e.target.value))} placeholder='Select range' width={200} value={years} size='md'>
+                                    <option value={500}>All time</option>
                                     <option value={1}>Last 1 year</option>
                                     <option value={5}>Last 5 years</option>
                                     <option value={10}>Last 10 years</option>

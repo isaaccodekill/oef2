@@ -11,8 +11,11 @@ import { debounce } from 'lodash'
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parse } from "path";
+import { useQueryClient } from "@tanstack/react-query";
+import { suggestionsKeys } from "@/lib/react-query/query-keys";
 
 export default function CreateTreeModal({ open, onClose }: { open: boolean, onClose: () => void }) {
+  const queryClient = useQueryClient()
 
   const toast = useToast()
 
@@ -57,6 +60,7 @@ export default function CreateTreeModal({ open, onClose }: { open: boolean, onCl
 
 
   const debouncedUpdateSuggestionQuery = useCallback(debounce((val) => {
+    queryClient.cancelQueries({ queryKey: suggestionsKeys.list() })
     setSuggestionQuery(val)
   }, 500), [])
 
@@ -102,7 +106,7 @@ export default function CreateTreeModal({ open, onClose }: { open: boolean, onCl
             Suggestions species:
           </Text>
           <div className="flex flex-row flex-wrap gap-2 mb-6">
-            {suggestions.filter(s => s).map(s =>
+            {suggestions.filter(s => s).slice(0, 5).map(s =>
               <Tag className="cursor-pointer hover:bg-slate-200" onClick={() => setValue('species', s)}>{s}</Tag>
             )}
           </div>

@@ -21,10 +21,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  color: #131313;
 }
 
-input, select{
+input,
+select {
   font-weight: 400;
 }
 
@@ -33,12 +33,9 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
 @layer utilities {

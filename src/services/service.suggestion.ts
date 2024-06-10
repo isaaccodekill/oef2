@@ -14,7 +14,7 @@ class SuggestionService {
 
     async getSuggestions(input: string): Promise<string[]> {
         try {
-            const response = await axios.get(`${SuggestionService.baseUrl}?token=${SuggestionService.token}&q=${input.includes('tree') ? input : input + 'tree'}`);
+            const response = await axios.get(`${SuggestionService.baseUrl}?token=${SuggestionService.token}&q=${input.includes('tree') ? input : input + ' tree'}`);
             // response is JSON object with data property
             const data = response.data.data;
             // data is an array of objects

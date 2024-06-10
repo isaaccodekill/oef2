@@ -12,7 +12,7 @@ const useGetSuggestions = (input: string) => {
 
     // react query hook to fetch suggestions
     return useQuery({
-        queryKey: suggestionsKeys.list(input),
+        queryKey: suggestionsKeys.list(),
         queryFn: fetchSuggestions,
         enabled: !!input
     });

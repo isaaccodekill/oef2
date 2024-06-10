@@ -6,12 +6,12 @@ export const treesKeys = {
 }
 
 export const suggestionsKeys = {
-    list: (input: string) => ['suggestions', input],
+    list: () => ['suggestions'],
 }
 
 export const dashboardKeys = {
     text: () => ['dashboard'],
-    analysis: () => ['dashboard', 'analysis'],
+    analysis: (years: number) => ['dashboard', 'analysis', years],
 }
 
 
