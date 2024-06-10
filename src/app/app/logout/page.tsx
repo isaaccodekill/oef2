@@ -19,7 +19,7 @@ const LogoutPage = () => {
         logout();
         setTimeout(() => {
             router.push('/auth/sign-in');
-        })
+        }, 100)
     }, []);
 
     return <div>Logging out...</div>;
