@@ -121,7 +121,7 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
                     </Text>
                     <div className="flex flex-row flex-wrap gap-2 mb-6">
                         {suggestions.filter(s => s).slice(0, 5).map(s =>
-                            <Tag className="cursor-pointer hover:bg-slate-200" onClick={() => setValue('species', s)}>{s}</Tag>
+                            <Tag key={s} className="cursor-pointer hover:bg-slate-200" onClick={() => setValue('species', s)}>{s}</Tag>
                         )}
                     </div>
                 </>
