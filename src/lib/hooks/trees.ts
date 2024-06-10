@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { treesKeys } from '../react-query/query-keys';
+import { dashboardKeys, treesKeys } from '../react-query/query-keys';
 import { CreateTreeForm, EditTreeForm, TreeData } from '@/types';
 import http from '../utils/http';
 import { useToast } from '@chakra-ui/react';
@@ -91,6 +91,7 @@ export function useDeleteTree(onSuccess: () => void) {
         onSuccess: () => {
             const key = treesKeys.list();
             queryClient.invalidateQueries({ queryKey: key });
+            queryClient.invalidateQueries({ queryKey: dashboardKeys.text() });
             onSuccess()
         },
     });

@@ -31,5 +31,6 @@ export const useGetAnalysisData = ({
     return useQuery({
         queryKey: dashboardKeys.analysis(noYears),
         queryFn: fetchAnalysisData,
+        staleTime: 1000 * 10,
     })
 }
