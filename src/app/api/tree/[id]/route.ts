@@ -19,11 +19,11 @@ const updateSchema = z.object({
 
 export const PUT = applyMiddleware(
     [withAuth, withRequestBody(updateSchema)],
-    async function (req: NextRequest, { params }) {
+    async function (req: NextRequest, { params, body }) {
         try {
             const user = await getAuthenticatedUser()
             if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
-            const treeData = params.body
+            const treeData = body
             const tree = await treeService.updateTree({
                 ...treeData,
                 id: params.id,

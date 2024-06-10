@@ -24,7 +24,7 @@ export function useCreateTree(onSuccess: () => void) {
 
             // Optimistically update to the new value
             if (previousValue) {
-                queryClient.setQueryData(treesKeys.list(), [...previousValue, variables]);
+                queryClient.setQueryData(treesKeys.list(), [...previousValue, {...variables, createdAt: new Date().toISOString()}]);
             }
 
             return { previousValue };
@@ -35,6 +35,8 @@ export function useCreateTree(onSuccess: () => void) {
             onSuccess()
         },
         onError: (e) => {
+            const key = treesKeys.list();
+            queryClient.invalidateQueries({ queryKey: key });
             toast(
                 {
                     status: "error",

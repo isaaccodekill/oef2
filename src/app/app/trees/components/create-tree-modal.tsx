@@ -77,14 +77,6 @@ export default function CreateTreeModal({ open, onClose }: { open: boolean, onCl
   }
 
   const onSuccess = () => {
-    toast({
-      title: "Success",
-      description: "Successfully tracked tree",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    })
-    closeCreateModal()
   }
 
   const createMutation = useCreateTree(onSuccess)
@@ -94,6 +86,7 @@ export default function CreateTreeModal({ open, onClose }: { open: boolean, onCl
 
   const onSubmit = (data: CreateTreeForm) => {
     createMutation.mutate(data)
+    closeCreateModal()
   }
 
   const renderSuggestions = () => {

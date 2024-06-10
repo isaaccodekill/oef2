@@ -6,7 +6,7 @@ export const treesKeys = {
 }
 
 export const suggestionsKeys = {
-    list: () => ['suggestions'],
+    list: (input: string) => ['suggestions', input],
 }
 
 export const dashboardKeys = {

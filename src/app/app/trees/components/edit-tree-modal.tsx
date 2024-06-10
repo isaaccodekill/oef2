@@ -5,7 +5,7 @@ import { Modal, ModalBody, ModalOverlay, ModalContent, ModalCloseButton, useDisc
 import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import { tree } from "next/dist/build/templates/app-page";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, use } from "react";
 import { Text } from "@/components/ui/text";
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +17,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { suggestionsKeys } from "@/lib/react-query/query-keys";
 
 export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boolean, TreeData: EditTreeForm | null, id: string | null, onClosed: () => void }) {
+
 
     const toast = useToast()
     const queryClient = useQueryClient()
@@ -45,6 +46,15 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
         resolver: zodResolver(editSchema)
     });
 
+    useEffect(() => {
+        if(!TreeData) return
+        setValue('name', TreeData?.name as string)
+        setValue('species', TreeData?.species as string)
+        setValue('yearPlanted', TreeData?.yearPlanted as string)
+        setValue('height', TreeData?.height as number)
+        setValue('trunkCircumference', TreeData?.trunkCircumference as number)
+    }, [TreeData])
+
     const name = watch('name')
     const species = watch('species')
     const yearPlanted = watch('yearPlanted')
@@ -60,7 +70,7 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
 
 
     const debouncedUpdateSuggestionQuery = useCallback(debounce((val) => {
-        queryClient.cancelQueries({ queryKey: suggestionsKeys.list() })
+        queryClient.cancelQueries({ queryKey: suggestionsKeys.list(val) })
         setSuggestionQuery(val)
     }, 500), [])
 
@@ -70,6 +80,7 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
 
     const closeForm = () => {
         onClosed()
+        queryClient.invalidateQueries({queryKey: suggestionsKeys.list(suggestionQuery)})
     }
 
     const onSuccessfulEdit = () => {
@@ -154,6 +165,9 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
                             <div className="">
                                 <Text className="text-[12px]"> The year planted </Text>
                                 <DatePicker
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    placeholderText="Select estimated date planted"
                                     className="focus:border-[#44639F] border bottom-1 w-full inline-flex h-[40px] items-center justify-center rounded-[4px] px-[15px] text-[15px] leading-none outline-none"
                                     selected={new Date(yearPlanted)}
                                     onChange={(date: Date) => setValue('yearPlanted', date.toISOString())} //only when value has changed
@@ -167,7 +181,7 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
                                     type="number"
                                     placeholder=""
                                     error={errors.height}
-                                    onChange={(val: string) => setValue('species', val)}
+                                    onChange={(val: number) => setValue('height', parseInt(val.toString()))}
                                 />
                             </div>
                             <div className="">
@@ -178,7 +192,7 @@ export default function EditTreeModal({ TreeData, onClosed, open, }: { open: boo
                                     type="number"
                                     placeholder=""
                                     error={errors.trunkCircumference}
-                                    onChange={(val: number) => setValue('trunkCircumference', val)}
+                                    onChange={(val: number) => setValue('trunkCircumference', parseInt(val.toString()))}
                                 />
                             </div>
                             <Button
