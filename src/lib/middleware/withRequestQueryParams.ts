@@ -1,10 +1,13 @@
+import { qs } from 'qs'
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 export const withRequestQueryParams = (schema: z.ZodObject<any>) => (req: NextRequest, context: any, next: any) => {
     try {
-        const { searchParams } = new URL(req.url);
-        const queryParams: Record<string, any> = Object.fromEntries(searchParams.entries());
+
+        const search = req.nextUrl.search.slice(1);
+        const queryParams = qs.parse(search);
+    
         for (const key in queryParams) {
             const value = queryParams[key];
             if (/^\d+$/.test(value)) {
