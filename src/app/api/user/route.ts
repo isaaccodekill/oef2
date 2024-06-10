@@ -3,10 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { userService } from '@/services/service.user';
 import applyMiddleware from '@/lib/middleware/appylyMiddleware';
 import withAuth from '@/lib/middleware/withAuth';
-import { NextApiRequest, NextApiResponse } from 'next';
 import z from 'zod';
 import withRequestBody from '@/lib/middleware/withRequestBody';
-import { withRequestQueryParams } from '@/lib/middleware/withRequestQueryParams';
 import { getAuthenticatedUser } from '@/lib/utils/auth';
 
 

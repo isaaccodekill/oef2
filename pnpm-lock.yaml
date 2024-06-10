@@ -50,6 +50,9 @@ dependencies:
   '@types/lodash':
     specifier: ^4.17.5
     version: 4.17.5
+  '@types/qs':
+    specifier: ^6.9.15
+    version: 6.9.15
   '@types/react-datepicker':
     specifier: ^6.2.0
     version: 6.2.0(react-dom@18.3.1)(react@18.3.1)
@@ -3872,6 +3875,10 @@ packages:
 
   /@types/prop-types@15.7.12:
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
+
+  /@types/qs@6.9.15:
+    resolution: {integrity: sha512-uXHQKES6DQKKCLh441Xv/dwxOq1TVS3JPUMlEqoEglvlhR6Mxnlew/Xq/LRVHpLyk7iK3zODe1qYHIMltO7XGg==}
+    dev: false
 
   /@types/react-datepicker@6.2.0(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-+JtO4Fm97WLkJTH8j8/v3Ldh7JCNRwjMYjRaKh4KHH0M3jJoXtwiD3JBCsdlg3tsFIw9eQSqyAPeVDN2H2oM9Q==}

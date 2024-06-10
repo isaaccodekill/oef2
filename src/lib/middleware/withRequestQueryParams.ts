@@ -1,4 +1,4 @@
-import { qs } from 'qs'
+import qs from 'qs'
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
