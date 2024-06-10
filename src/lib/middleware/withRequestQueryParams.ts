@@ -7,12 +7,13 @@ export const withRequestQueryParams = (schema: z.ZodObject<any>) => (req: NextRe
 
         const search = req.nextUrl.search.slice(1);
         const queryParams = qs.parse(search);
+        const newQueryParams:Record<string, any> = {...queryParams};
     
         for (const key in queryParams) {
-            const value = queryParams[key];
+            const value = queryParams[key] as string;
             if (/^\d+$/.test(value)) {
                 // Convert to number if it's a string of digits
-                queryParams[key] = parseInt(value, 10);
+                newQueryParams[key] = parseInt(value, 10);
             }
         }
         schema.parse(queryParams);
