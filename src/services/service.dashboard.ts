@@ -60,9 +60,6 @@ class DashboardService<T extends typeof prisma> {
     // draw a graph of the total number of trees planted per year over the last 10 years
     async getTreesPlantedPerYear(noOfYears: number): Promise<{ year: string, trees_planted: number }[]> {
         const currentYear = new Date().getFullYear();
-        console.log(currentYear, "what is it current", noOfYears)
-
-        console.log(currentYear - noOfYears, "what is it")
         const response = await prisma.$queryRaw`
         SELECT
         EXTRACT(YEAR FROM "yearPlanted") as year, COUNT(*) as trees_planted
