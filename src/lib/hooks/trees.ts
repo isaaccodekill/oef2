@@ -32,6 +32,7 @@ export function useCreateTree(onSuccess: () => void) {
         onSuccess: () => {
             const key = treesKeys.list();
             queryClient.invalidateQueries({ queryKey: key });
+            queryClient.invalidateQueries({ queryKey: dashboardKeys.text() });
             onSuccess()
         },
         onError: (e) => {
