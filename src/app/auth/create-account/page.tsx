@@ -11,11 +11,13 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignOut, useSignUp } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useToast } from "@chakra-ui/react";
 
 
 
 const CreateAccountPage: React.FC = () => {
 
+    const toast = useToast()
     const router = useRouter()
     const userSchema = z.object({
         firstName: z.string().min(2, { message: 'First name must be at least 2 characters long' }),
@@ -52,6 +54,13 @@ const CreateAccountPage: React.FC = () => {
 
     const redirectToSignIn = () => {
         // redirect to sign in page
+        toast({
+            title: "Account created",
+            description: "You can now sign in to your account",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        })
         router.replace('/app/dashboard')
     }
 
