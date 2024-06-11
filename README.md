@@ -1,6 +1,6 @@
 ### Hi Welcome to my solution for the OEF take home
 
-### This project can be viewed live at [https://oef2-lb77vs6zy-isaac-bellos-projects.vercel.app](https://oef2-lb77vs6zy-isaac-bellos-projects.vercel.app)
+### This project can be viewed live at [https://oef2-kappa.vercel.app](https://oef2-kappa.vercel.app)
 
 
 # This project was built with NextJs-14, Supabase for my database and Prisma for my orm
