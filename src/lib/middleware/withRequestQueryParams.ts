@@ -16,7 +16,7 @@ export const withRequestQueryParams = (schema: z.ZodObject<any>) => (req: NextRe
                 newQueryParams[key] = parseInt(value, 10);
             }
         }
-        schema.parse(queryParams);
+        schema.parse(newQueryParams);
         context = {
             ...context,
             query: queryParams,
