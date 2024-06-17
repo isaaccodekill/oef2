@@ -1,6 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 
+const https = require('https');
+
+
 const processError = (error: AxiosError) => {
     const errorData = error.response?.data as Record<any, any>;
     const errorMessage = errorData?.message || 'Something went wrong, try again';

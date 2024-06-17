@@ -6,7 +6,7 @@ import { unknown } from 'zod';
 class SuggestionService {
 
     private static token: string
-    private static baseUrl = 'https://trefle.io/api/v1/plants/search';
+    private static baseUrl = 'http://trefle.io/api/v1/plants/search';
 
     constructor() {
         SuggestionService.token = process.env.TREFFLE_API_KEY as string;
